@@ -1,4 +1,4 @@
-'git strict';
+'use strict';
 
 let money = prompt('Ваш месячный доход?');
 let income = 'Инвестиции';
