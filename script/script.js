@@ -17,8 +17,6 @@ start();
 
 
 let appData = {
-    income: {},
-    addIncome: [],
     expenses: {},
     addExpenses: [],
     deposit: false,
@@ -78,5 +76,9 @@ if (appData.targetMonth > 0) {
     console.log('Цель не будет достигнута');
 }
 
-console.log('Бюджет на день: ' + appData.budgetDay);
 console.log(appData.getStatusIncome());
+
+console.log('Наша программа включает в себя: ');
+for (let item in appData) {
+    console.log(appData[item]);
+}
