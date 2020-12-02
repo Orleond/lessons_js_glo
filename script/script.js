@@ -50,9 +50,6 @@ let appData = {
             a += appData.addExpenses[item].trim().substr(1);
             appData.addExpenses[item] = a;
         }
-        for (let item in appData.addExpenses) {
-            console.log(appData.addExpenses[item]);
-        }
         appData.deposit = confirm('Есть ли у вас депозит в банке?');
         for (let i = 0; i < 2; i++) {
             let answer, answer2;
@@ -134,3 +131,9 @@ for (let item in appData) {
 
 appData.getInfoDeposit();
 console.log(appData.percentDeposit, appData.moneyDeposit, appData.calcSavedMoney());
+
+let printExpenses = '';
+for (let item of appData.addExpenses) {
+    printExpenses += item + ', ';
+}
+console.log(printExpenses.substr(0, printExpenses.length - 2));
