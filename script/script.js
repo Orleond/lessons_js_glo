@@ -90,7 +90,7 @@ let appData = {
     getIncome: function() {
         incomeItems.forEach(function(item) {
             let itemIncome = item.querySelector('.income-title').value,
-                cashIncome = item.querySelector('income-amount');
+                cashIncome = item.querySelector('.income-amount').value;
 
             if (itemIncome !== '' && cashIncome !== '') {
                 appData.income[itemIncome] = cashIncome;
