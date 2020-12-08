@@ -1,5 +1,8 @@
 'use strict';
 
+const rusString = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ,.!?-_"\' ',
+    numbers = '0123456789';
+
 let start = document.getElementById('start'),
     incomePlus = document.getElementsByTagName('button')[0],
     expensesPlus = document.getElementsByTagName('button')[1],
@@ -13,7 +16,6 @@ let start = document.getElementById('start'),
     incomePeriodValue = document.getElementsByClassName('income_period-value')[0],
     targetMonthValue = document.getElementsByClassName('target_month-value')[0],
     salaryAmount = document.querySelector('.salary-amount'),
-    incomeTitle = document.querySelectorAll('input.income-title'),
     expensesTitle = document.querySelectorAll('input.expenses-title'),
     expensesItems = document.querySelectorAll('.expenses-items'),
     incomeItems = document.querySelectorAll('.income-items'),
@@ -48,22 +50,57 @@ let appData = {
     // percentDeposit: 0,
     // moneyDeposit: 0,
     start: function() {
-        appData.budget = +salaryAmount.value;
+        if (!appData.checkNum(salaryAmount.value)) {
+            alert('Неверно введен месячный доход!');
+        } else {
+            appData.budget = +salaryAmount.value;
+        }
 
-        appData.getExpenses();
         appData.getIncome();
+        appData.getAddIncome();
+        appData.getExpenses();
         appData.getExpensesMonth();
         appData.getAddExpenses();
-        appData.getAddIncome();
         appData.getBudget();
-
         appData.showResult();
+    },
+    checkString: function(item) {
+        let a = 0;
+        for (let i = 0; i < item.length; i++) {
+            for (let n = 0; n < rusString.length; n++) {
+                if (item[i] === rusString[n]) {
+                    a++;
+                }
+            }
+        }
+        if (a !== item.length) {
+            return false;
+        } else {
+            return true;
+        }
+    },
+    checkNum: function(item) {
+        let a = 0;
+        for (let i = 0; i < item.length; i++) {
+            for (let n = 0; n < numbers.length; n++) {
+                if (item[i] === numbers[n]) {
+                    a++;
+                }
+            }
+        }
+        if (a !== item.length) {
+            return false;
+        } else {
+            return true;
+        }
     },
     addExpensesBlock: function() {
 
         let cloneExpensesItem = expensesItems[0].cloneNode(true);
         expensesItems[0].parentNode.insertBefore(cloneExpensesItem, expensesPlus);
         expensesItems = document.querySelectorAll('.expenses-items');
+        let expensesTitle = expensesItems[expensesItems.length - 1].querySelector('.expenses-title').value = '',
+            expensionAmount = expensesItems[expensesItems.length - 1].querySelector('.expenses-amount').value = '';
         if (expensesItems.length === 3) {
             expensesPlus.style.display = 'none';
         }
@@ -73,6 +110,8 @@ let appData = {
         let cloneIncomeItem = incomeItems[0].cloneNode(true);
         incomeItems[0].parentNode.insertBefore(cloneIncomeItem, incomePlus);
         incomeItems = document.querySelectorAll('.income-items');
+        let incomeTitle = incomeItems[incomeItems.length - 1].querySelector('.income-title').value = '',
+            incomeAmount = incomeItems[incomeItems.length - 1].querySelector('.income-amount').value = '';
         if (incomeItems.length === 3) {
             incomePlus.style.display = 'none';
         }
@@ -81,8 +120,15 @@ let appData = {
         expensesItems.forEach(function(item) {
             let itemExpenses = item.querySelector('.expenses-title').value,
                 cashExpenses = item.querySelector('.expenses-amount').value;
-
-            if (itemExpenses !== '' & cashExpenses !== '') {
+            if (!appData.checkString(itemExpenses)) {
+                alert('Неверный ввод наименования обязательного расхода!');
+                return;
+            }
+            if (!appData.checkNum(cashExpenses)) {
+                alert('Неверно введена сумма обязательного расхода!');
+                return;
+            }
+            if (appData.checkString(itemExpenses) & appData.checkNum(cashExpenses)) {
                 appData.expenses[itemExpenses] = cashExpenses;
             }
         });
@@ -90,9 +136,17 @@ let appData = {
     getIncome: function() {
         incomeItems.forEach(function(item) {
             let itemIncome = item.querySelector('.income-title').value,
-                cashIncome = item.querySelector('income-amount');
+                cashIncome = item.querySelector('.income-amount').value;
 
-            if (itemIncome !== '' && cashIncome !== '') {
+            if (!appData.checkString(itemIncome)) {
+                alert('Неверный ввод наименования дополнительного дохода!');
+                return;
+            }
+            if (!appData.checkNum(cashIncome)) {
+                alert('Неверно введена сумма дополнительного дохода!');
+                return;
+            }
+            if (appData.checkString(itemIncome) && appData.checkNum(cashIncome)) {
                 appData.income[itemIncome] = cashIncome;
             }
         });
@@ -113,7 +167,10 @@ let appData = {
     getAddIncome: function() {
         additionalIncomeItem.forEach(function(item) {
             let itemValue = item.value.trim();
-            if (itemValue !== '') {
+            if (!appData.checkString(itemValue)) {
+                alert('Неверный ввод наименования возможного дохода!');
+                return;
+            } else {
                 appData.addIncome.push(itemValue);
             }
         });
@@ -140,7 +197,12 @@ let appData = {
         appData.budgetDay = Math.floor(appData.budgetMonth / 30);
     },
     getTargetMonth: function() {
-        return Math.ceil(targetAmount.value / appData.budgetMonth);
+        if (!appData.checkNum(targetAmount.value)) {
+            alert('Неверно введена сумма желаемого накопления!');
+            return;
+        } else {
+            return Math.ceil(targetAmount.value / appData.budgetMonth);
+        }
     },
     getStatusIncome: function() {
         if (appData.budgetDay >= 40) {
